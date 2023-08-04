@@ -4,13 +4,10 @@ from category_encoders import TargetEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import FunctionTransformer
 
-CAT_FEATURES = [
-    "season"
-]
+CAT_FEATURES = []
 
 preprocess_pipeline = ColumnTransformer(
     transformers=[
-
         ("target_encoder", TargetEncoder(), CAT_FEATURES),
     ],
     remainder="passthrough",

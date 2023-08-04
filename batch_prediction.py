@@ -31,7 +31,7 @@ if __name__ == "__main__":
     id_ = test["datetime"].to_numpy()
 
     logger.info("Saving a feature data for the test data...")
-    model["preprocess"].transform(X=X).to_csv(
+    model["preprocessor"].transform(X=X).to_csv(
         os.path.join(DATA_PATH, "storage", "bike_sharing_test_features.csv"),
         index=False,
     )
