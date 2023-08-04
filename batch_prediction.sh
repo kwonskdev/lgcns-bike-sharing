@@ -1,5 +1,5 @@
 BASH_ENV=~/.bashrc
-ROOT_PATH=/workspaces/lgcns-mlops-practice
+ROOT_PATH=/workspaces/lgcns-bike-sharing
 PIPENV_PIPFILE=$ROOT_PATH/Pipfile
 
 export PATH=$PATH:/usr/local/py-utils/bin
