@@ -21,19 +21,16 @@ from src.common.metrics import rmse_cv_score
 from src.common.utils import get_param_set
 from src.preprocess import preprocess_pipeline
 
-
-
 sys.excepthook = handle_exception
 warnings.filterwarnings(action="ignore")
-
 
 
 if __name__ == "__main__":
     train_df = pd.read_csv(os.path.join(DATA_PATH, "bike_sharing_train.csv"))
 
-    _X = train_df.drop(["datetime"], axis=1)
+    _X = train_df.drop(["datetime", "count"], axis=1)
     y = train_df["count"]
-    
+
     # TODO: X=_X, y=y로 전처리 파이프라인을 적용해 X에 저장
     X = preprocess_pipeline.fit_transform(X=_X, y=y)
     # Data storage - 피처 데이터 저장
@@ -45,11 +42,10 @@ if __name__ == "__main__":
         index=False,
     )
 
-
     params_candidates = {
-        "learning_rate": [0.01, 0.05, 0.09],
-        "max_depth": [3, 4, 5, 6],
-        "max_features": [1.0, 0.9, 0.8, 0.7],
+        "learning_rate": [0.01],
+        "max_depth": [3],
+        "max_features": [1.0],
     }
 
     param_set = get_param_set(params=params_candidates)
@@ -60,7 +56,6 @@ if __name__ == "__main__":
     mlflow.set_tracking_uri("./mlruns")
 
     for i, params in enumerate(param_set):
-
         run_name = f"Run {i}"
         with mlflow.start_run(run_name=f"Run {i}"):
             regr = GradientBoostingRegressor(**params)
@@ -80,11 +75,7 @@ if __name__ == "__main__":
             mlflow.log_params({key: regr.get_params()[key] for key in params})
 
             # 로깅 정보: 평가 메트릭
-            mlflow.log_metrics(
-                {
-                    "RMSE_CV": score_cv.mean()
-                }
-            )
+            mlflow.log_metrics({"RMSE_CV": score_cv.mean()})
 
             # 로깅 정보 : 학습 loss
             for s in regr.train_score_:
@@ -124,10 +115,9 @@ if __name__ == "__main__":
         ARTIFACT_PATH,
     )
 
-
     # BentoML에 모델 저장
     bentoml.sklearn.save_model(
-        name="house_rent",
+        name="bike_sharing",
         model=mlflow.sklearn.load_model(
             # TODO: 베스트 모델 URI
             best_model_uri
